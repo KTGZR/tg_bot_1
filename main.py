@@ -1,4 +1,4 @@
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.types import Message, ContentType
 import os
@@ -25,6 +25,11 @@ async def process_start_command(message: Message):
 @dp.message(Command(commands=["help"]))
 async def process_help_command(message: Message):
     await message.answer('Ты глупый или что-то?')
+
+@dp.message(F.photo)
+async def send_photo_echo(message: Message):
+    print(message)
+    await message.reply_photo(message.photo[-1].file_id)
 
 @dp.message()
 async def send_echo(message: Message):
