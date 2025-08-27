@@ -1,3 +1,7 @@
 #venv
 venv/
 vars.env
+log.txt
+test.py
+sw*.py
+.idea/
