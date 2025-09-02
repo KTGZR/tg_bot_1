@@ -24,7 +24,7 @@ else:
 bot  = Bot(token=bot_token)
 dp = Dispatcher()
 
-admins_id = [790161259]
+admins_id = []
 
 users = {}
 
