@@ -1,13 +1,14 @@
 #Python 3.8
 from aiogram import Bot, Dispatcher, F
-from aiogram.filters import Command,CommandStart, BaseFilter
-from aiogram.types import Message, ContentType, PhotoSize
+from aiogram.filters import Command,CommandStart, BaseFilter, and_f
+from aiogram.types import Message, ContentType, PhotoSize,FSInputFile
 import os
 from datetime import datetime
 from dotenv import load_dotenv
 import random
 import time
 from typing import List,Union,Dict,Any
+import logging
 
 # pyright: reportOptionalMemberAccess=false
 # pyright: reportArgumentType=false
@@ -74,7 +75,9 @@ async def process_start_command(message: Message):
         'команд - отправьте команду /help.\n'
         'Также ты можешь отправить фото и получить её характеристики.\n'
         'Я могу искать числа в строке.\nНапиши "найди число" и я найду число в тексте')
-    await bot.send_animation(message.chat.id,'CgACAgQAAxkBAAIGsGiuhhXWenc9PERVPZmQGiUY2xX6AAI7CQAC9tN1UV7GrXr_nOnyNgQ')
+    if os.path.exists('./gifs/start.gif'):
+
+        await bot.send_animation(message.chat.id, FSInputFile('./gifs/start.gif'))
     if message.from_user.id not in users:
         users[message.from_user.id] = user
     print(users)
@@ -85,8 +88,14 @@ async def process_help_command(message: Message):
         f'а вам нужно его угадать\nУ вас есть {ATTEMPTS} '
         'попыток\n\nДоступные команды:\n/help - правила '
         'игры и список команд\n/cancel - выйти из игры\n'
-        '/stat - посмотреть статистику\n/botstat - информация о боте(администратор)\n/off - выключение бота(администратор)\n\nДавай сыграем?')
+        '/stat - посмотреть статистику\n/status - статус игры\n/botstat - информация о боте(администратор)\n/off - выключение бота(администратор)\n\nДавай сыграем?')
 
+@dp.message(Command(commands=['status']))
+async def games_check(message: Message):
+    if message.from_user.id in users and users[message.from_user.id]['in_game'] == True:
+        await message.answer('Мы играем(*_*)')
+    else:
+        await message.answer('Мы не играем, хотите начать?')
 
 @dp.message(Command(commands=["stat"]))
 async def process_stat_command(message: Message):
@@ -186,7 +195,7 @@ async def process_numbers_answer(message: Message):
 async def off_bot(message: Message, status: int):
     if status == 1:
         print('Exiting by admins request from telegram')
-        exit()
+        await dp.stop_polling()
     else:
         await message.answer('Вы не можете выключить бота, вы не администратор.')
 
