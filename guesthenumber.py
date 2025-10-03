@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 import random
 import time
 from typing import List,Union,Dict,Any
-import logging
+
 
 # pyright: reportOptionalMemberAccess=false
 # pyright: reportArgumentType=false
